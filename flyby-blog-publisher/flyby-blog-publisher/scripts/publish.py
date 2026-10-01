@@ -96,7 +96,10 @@ def get_or_create_term(taxonomy, name):
 def next_post_file():
     if not QUEUE_DIR.exists():
         die(f"queue directory not found: {QUEUE_DIR}")
-    candidates = sorted(p for p in QUEUE_DIR.glob("*.md") if p.is_file())
+    candidates = sorted(
+        p for p in QUEUE_DIR.rglob("*.md")
+        if p.is_file() and PUBLISHED_DIR not in p.parents
+    )
     return candidates[0] if candidates else None
 
 
@@ -146,11 +149,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-def next_post_file():
-    if not QUEUE_DIR.exists():
-        die(f"queue directory not found: {QUEUE_DIR}")
-    candidates = sorted(
-        p for p in QUEUE_DIR.rglob("*.md")
-        if p.is_file() and PUBLISHED_DIR not in p.parents
-    )
-    return candidates[0] if candidates else None
